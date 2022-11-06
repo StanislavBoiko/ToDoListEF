@@ -1,0 +1,60 @@
+@page
+@model ToDoListEF.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<h1>Todo List</h1>
+<h4>Add a todo</h4>
+<p class="text-success">@Model.Message</p>
+<form asp-page="Index" method="post" class="form-inline">
+    <input type="text" id="Description" name="Description" class="form-control" placeholder="Description" />
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add</button>
+</form><br/>
+<form asp-page="Index" method="get" asp-for="Date">
+    <input class="form-control" type="date" id="Date" name="Date"/>
+    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i>Search by date</button>
+</form>
+<div asp-validation-summary="All"></div>
+@if (Model.Date.HasValue)
+{
+    <h4>Todo's created on @Model.Date</h4>
+}
+else
+{
+    <h4>Current Todo's</h4>
+}
+@if (!Model.Todos.Any())
+{
+    <p class="empty">The list is empty</p>
+}
+else
+{
+    <ul class="list-unstyled">
+        @foreach (var todo in Model.Todos)
+        {
+            <li>
+                <form method="post" asp-page="Index" asp-page-handler="Remove" style="display: inline">
+                    <input type="hidden" name="Id" value="@todo.Id" />
+                    <button type="submit" class="btn btn-link"><i class="fa-solid fa-trash"></i></button>
+                </form>
+                <form method="post" asp-page="Index" asp-page-handler="Edit" style="display: inline">
+                    <input type="hidden" name="Id" value="@todo.Id" />
+                    <button type="submit" class="btn btn-link"><i class="fa-solid fa-pen-to-square"></i></button>
+                </form>
+                @todo.Description<br>
+                Created: @todo.TimeCreated Updated: @todo.TimeUpdated
+            </li>
+        }
+    </ul>
+}
+<style>
+    .validation-summary-errors ul {
+        list-style-type: none;
+        color: red;
+        padding:0;
+        margin:0;
+    }
+    .empty {
+        color: lightgray;
+    }
+</style>
