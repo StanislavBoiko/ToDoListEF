@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ToDoListEF.Data;
+using ToDoListEF.Repositories;
 using ToDoListEF.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<ITodoRepo, TodoRepo>();
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<TodoContext>(options =>

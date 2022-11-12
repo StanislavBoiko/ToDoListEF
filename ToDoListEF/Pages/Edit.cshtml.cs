@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ToDoListEF.Data;
 using ToDoListEF.Models;
+using ToDoListEF.Repositories;
 using ToDoListEF.Services;
 
 namespace ToDoListEF.Pages
 {
     public class EditModel : PageModel
     {
-        private readonly ITodoRepo _todoRepo;
+        private readonly ITodoService _todoService;
 
-        public EditModel(ITodoRepo todoRepo)
+        public EditModel(ITodoService todoService)
         {
-            _todoRepo = todoRepo;
+            _todoService = todoService;
         }
 
         [BindProperty]
@@ -26,12 +27,12 @@ namespace ToDoListEF.Pages
 
         public  IActionResult OnGet(Guid? id)
         {
-            if (id == null || _todoRepo.GetAll() == null)
+            if (id == null || _todoService.GetAll() == null)
             {
                 return NotFound();
             }
 
-            var todo = _todoRepo.GetAll().FirstOrDefault(m => m.Id == id);
+            var todo = _todoService.GetAll().FirstOrDefault(m => m.Id == id);
             if (todo == null)
             {
                 return NotFound();
@@ -49,9 +50,8 @@ namespace ToDoListEF.Pages
                 return Page();
             }
 
-            _todoRepo.Update(Todo);
+            _todoService.Update(Todo);
 
-            _todoRepo.Save();
             return RedirectToPage("./Index");
         }
     }

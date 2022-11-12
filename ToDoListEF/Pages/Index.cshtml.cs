@@ -9,17 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ToDoListEF.Data;
 using ToDoListEF.Models;
+using ToDoListEF.Repositories;
 using ToDoListEF.Services;
 
 namespace ToDoListEF.Pages
 {
     public class IndexModel : PageModel
     {
-        private ITodoRepo _todoRepo;
+        private ITodoService _todoService;
         
-        public IndexModel(ITodoRepo todoRepo)
+        public IndexModel(ITodoService todoService)
         {
-            _todoRepo = todoRepo;
+            _todoService = todoService;
         }
         
         [TempData]
@@ -35,11 +36,11 @@ namespace ToDoListEF.Pages
         {
             if (Date.HasValue)
             {
-                Todos = _todoRepo.GetByDate((DateTime)Date);
+                Todos = _todoService.GetByDate((DateTime)Date);
             }
             else
             {
-                Todos = _todoRepo.GetAll();
+                Todos = _todoService.GetAll();
             }
         }
 
@@ -51,8 +52,8 @@ namespace ToDoListEF.Pages
                 return Page();
             }
             
-            _todoRepo.Add(todo);
-            _todoRepo.Save();
+            _todoService.Add(todo);
+            
             Message = $"Added: {todo.Description}";
             return RedirectToPage();
         }
@@ -61,8 +62,8 @@ namespace ToDoListEF.Pages
         {
             if (ModelState.IsValid)
             {
-                _todoRepo.Remove(id);                       
-                _todoRepo.Save();
+                _todoService.Remove(id);                       
+                
                 return RedirectToPage();
             }
 
@@ -76,7 +77,7 @@ namespace ToDoListEF.Pages
                 return Page();
             }
 
-            if (_todoRepo.Find(id) != null)
+            if (_todoService.Find(id) != null)
             {
                 return RedirectToPage("Edit", new { id = id });
             }

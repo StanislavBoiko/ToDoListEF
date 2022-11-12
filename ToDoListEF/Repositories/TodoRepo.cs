@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoListEF.Data;
 using ToDoListEF.Models;
 
-namespace ToDoListEF.Services;
+namespace ToDoListEF.Repositories;
 
 public class TodoRepo : ITodoRepo, IDisposable
 {
@@ -20,16 +20,15 @@ public class TodoRepo : ITodoRepo, IDisposable
 
     public void Add(Todo todo)
     {
-        todo.TimeCreated = DateTime.UtcNow;
-        todo.TimeUpdated = DateTime.UtcNow;
         _context.Todo.Add(todo);
+        _context.SaveChanges();
     }
 
     public void Remove(Guid id)
     {
         Todo todo = _context.Todo.Find(id);
         _context.Todo.Remove(todo);
-
+        _context.SaveChanges();
     }
 
     public Todo Find(Guid id)
@@ -39,19 +38,10 @@ public class TodoRepo : ITodoRepo, IDisposable
 
     public void Update(Todo todo)
     {
-        todo.TimeUpdated = DateTime.UtcNow;
         _context.Entry(todo).State = EntityState.Modified;
-    }
-
-    public List<Todo> GetByDate(DateTime date)
-    {
-         return _context.Todo.ToList().FindAll(t => t.TimeCreated.Date == date);
-    }
-
-    public void Save()
-    {
         _context.SaveChanges();
     }
+    
 
     private bool disposed = false;
 
